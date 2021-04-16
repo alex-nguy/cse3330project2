@@ -43,14 +43,13 @@ c.execute("INSERT INTO RATE VALUES(5, 1, 900.00, 150.00), (6, 1, 800.00, 135.00)
 # QUESTION 5
 c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE, RENTAL WHERE VEHICLE.Type = 1 AND VEHICLE.Category = 1 AND RENTAL.StartDate BETWEEN DATE('2019-06-01') AND DATE('2019-06-20')")
 print(c.fetchall())
->>>>>>> 424656e60d9cc8edc33c81876db37386a78e6f5d
 
 # QUESTION 6
 c.execute("SELECT CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER, RENTAL WHERE CUSTOMER.CustID = 221 AND RENTAL.PaymentDate IS NULL")
 print(c.fetchall())
 
 # QUESTION 7
-c.execute("""
+c.execute("
 SELECT VEHICLE.VehicleID AS VIN, 
     VEHICLE.Description, 
     VEHICLE.Year, 
@@ -70,7 +69,7 @@ SELECT VEHICLE.VehicleID AS VIN,
     RATE.Daily  
 FROM VEHICLE, RATE 
 WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category
-ORDER BY Category DESC, VEHICLE.Type ASC""")
+ORDER BY Category DESC, VEHICLE.Type ASC)
 print(c.fetchall())
 
 # QUESTION 8
@@ -78,11 +77,6 @@ c.execute("SELECT SUM(TotalAmount) FROM RENTAL WHERE PaymentDate < DATE('now')")
 print(c.fetchall())
 
 # Checks Question 9a
-c.execute("SELECT DISTINCT v.Description, v.Year, v.Type, v.Category, r.TotalAmount
-    FROM VEHICLE v, RENTAL r, CUSTOMER c
-    WHERE c.CustID == 210 AND c.CustID == r.CustID AND v.VehicleID == r.VehicleID
-    ORDER BY r.StartDate")
-print(c.fetchall())
 
 # Checks Question 9b
 
