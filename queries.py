@@ -79,19 +79,19 @@ print(c.fetchall())
 # Checks Question 9a
 c.execute("SELECT v.Description, v.Year, v.Type, v.Category, julianday(r.returndate) - julianday(r.startdate) AS TotalDuration,
 	CASE r.rentaltype
-    	WHEN 1 THEN "Daily"
-        When 7 THEN "Weekly"
+    	WHEN 1 THEN 'Daily'
+        When 7 THEN 'Weekly'
         END RentalType,
     CASE When r.PaymentDate IS NULL
-    	THEN "Unpaid"
-        ELSE "Paid"
+    	THEN 'Unpaid'
+        ELSE 'Paid'
         END PaymentStatus,
     r.TotalAmount
 FROM VEHICLE v
 INNER JOIN RENTAL r
 ON r.VehicleID = v.VehicleID
 INNER JOIN CUSTOMER c
-ON r.CustID = c.CustID AND c.Name = "J. Brown"
+ON r.CustID = c.CustID AND c.Name = 'J. Brown'
 ORDER By r.StartDate")
 
 # Checks Question 9b
@@ -99,7 +99,7 @@ ORDER By r.StartDate")
 # Checks Question 10
 c.execute("SELECT DISTINCT	c.Name, r.StartDate, r.ReturnDate, r.TotalAmount
             FROM	RENTAL r, CUSTOMER c, VEHICLE v
-            WHERE	r.RentalType == 7 AND v.VehicleID == "19VDE1F3XEE414842" AND r.CustID == c.CustID AND r.PaymentDate IS NULL")
+            WHERE	r.RentalType == 7 AND v.VehicleID == '19VDE1F3XEE414842' AND r.CustID == c.CustID AND r.PaymentDate IS NULL")
 
 # Checks Question 11
 c.execute("SELECT	c.CustID, c.Name, c.Phone
