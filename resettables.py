@@ -63,7 +63,10 @@ with open('./entryfiles/RENTAL.csv', 'r') as csv_file:
     csv_reader = csv.reader(csv_file)
     next(csv_reader)
     for x in csv_reader:
-        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)",{'CustID': x[0], 'VehicleID': x[1], 'StartDate': x[2], 'OrderDate': x[3], 'RentalType': x[4], 'Qty': x[5], 'ReturnDate': x[6], 'TotalAmount': x[7], 'PaymentDate': x[8]})
+        if x[8] == 'NULL':
+            c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)",{'CustID': x[0], 'VehicleID': x[1], 'StartDate': x[2], 'OrderDate': x[3], 'RentalType': x[4], 'Qty': x[5], 'ReturnDate': x[6], 'TotalAmount': x[7]})
+        else:
+            c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)",{'CustID': x[0], 'VehicleID': x[1], 'StartDate': x[2], 'OrderDate': x[3], 'RentalType': x[4], 'Qty': x[5], 'ReturnDate': x[6], 'TotalAmount': x[7], 'PaymentDate': x[8]})
 with open('./entryfiles/RATE.csv', 'r') as csv_file:
     csv_reader = csv.reader(csv_file)
     next(csv_reader)
