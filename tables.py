@@ -5,20 +5,18 @@ c = conn.cursor()
 
 c.execute("""
 CREATE TABLE CUSTOMER(
-    [CustID]    INT NOT NULL,
+    [CustID]    INTEGER PRIMARY KEY,
     [Name] VARCHAR(30)  NOT NULL,
-    [Phone] VARCHAR(15)   NOT NULL,
-    PRIMARY KEY(CustID)
+    [Phone] VARCHAR(15)
 );
 """)
 c.execute("""
 CREATE TABLE VEHICLE(
-    [VehicleID] VARCHAR(18) NOT NULL,
+    [VehicleID] VARCHAR(18) PRIMARY KEY,
     [Description]   VARCHAR(30) NOT NULL,
     [Year]  INT NOT NULL,
     [Type]  INT NOT NULL,
-    [Category]  INT NOT NULL,
-    PRIMARY KEY(VehicleID)
+    [Category]  INT NOT NULL
 );
 """)
 c.execute("""
