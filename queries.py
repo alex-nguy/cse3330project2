@@ -77,6 +77,22 @@ c.execute("SELECT SUM(TotalAmount) FROM RENTAL WHERE PaymentDate < DATE('now')")
 print(c.fetchall())
 
 # Checks Question 9a
+c.execute("SELECT v.Description, v.Year, v.Type, v.Category, julianday(r.returndate) - julianday(r.startdate) AS TotalDuration,
+	CASE r.rentaltype
+    	WHEN 1 THEN "Daily"
+        When 7 THEN "Weekly"
+        END RentalType,
+    CASE When r.PaymentDate IS NULL
+    	THEN "Unpaid"
+        ELSE "Paid"
+        END PaymentStatus,
+    r.TotalAmount
+FROM VEHICLE v
+INNER JOIN RENTAL r
+ON r.VehicleID = v.VehicleID
+INNER JOIN CUSTOMER c
+ON r.CustID = c.CustID AND c.Name = "J. Brown"
+ORDER By r.StartDate")
 
 # Checks Question 9b
 
