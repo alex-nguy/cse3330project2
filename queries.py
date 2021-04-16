@@ -39,5 +39,7 @@ c.execute("INSERT INTO RATE VALUES(5, 1, 900.00, 150.00), (6, 1, 800.00, 135.00)
 # c.execute("SELECT * FROM RATE")
 # print(c.fetchall())
 
+
+
 conn.commit()
 conn.close()

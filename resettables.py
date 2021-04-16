@@ -29,13 +29,13 @@ c.execute("""
 CREATE TABLE RENTAL(
     [CustID]    INT NOT NULL,
     [VehicleID] VARCHAR(18) NOT NULL,
-    [StartDate] VARCHAR(12) NOT NULL,
-    [OrderDate] VARCHAR(12) NOT NULL,
+    [StartDate] DATE    NOT NULL,
+    [OrderDate] DATE NOT NULL,
     [RentalType]    INT     NOT NULL,
     [Qty]   INT NOT NULL,
-    [ReturnDate]    VARCHAR(12) NOT NULL,
+    [ReturnDate]    DATE    NOT NULL,
     [TotalAmount]   DOUBLE NOT NULL,
-    [PaymentDate]   VARCHAR(12),
+    [PaymentDate]   DATE,
     FOREIGN KEY(CustID) REFERENCES CUSTOMER(CustID),
     FOREIGN KEY(VehicleID) REFERENCES VEHICLE(VehicleID)
 );
