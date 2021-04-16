@@ -69,7 +69,7 @@ SELECT VEHICLE.VehicleID AS VIN,
     RATE.Daily  
 FROM VEHICLE, RATE 
 WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category
-ORDER BY Category DESC, VEHICLE.Type ASC)
+ORDER BY Category DESC, VEHICLE.Type ASC")
 print(c.fetchall())
 
 # QUESTION 8
