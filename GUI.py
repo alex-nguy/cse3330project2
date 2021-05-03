@@ -30,7 +30,7 @@ class Register_Window:
         phone_entry.grid(row=1, column=1)
 
         submit = tk.Button(rw, text='submit', width=10,
-                           command=self.callback)
+                           command=self.submit_handler)
         submit.grid(row=2, column=1)
 
         back_button = tk.Button(rw, text='back', width=10, command=self.back)
@@ -43,7 +43,7 @@ class Register_Window:
         self.registerwindow.destroy()
         Main_Window(self.parent)
 
-    def callback(self):
+    def submit_handler(self):
         print(self.user.get())
         print(self.phone.get())
 
@@ -73,7 +73,8 @@ class Main_Window:
             mw, text="Register new customer", width=20, command=self.open_register)
         register_btn.grid(row=1, column=0)
 
-        rental_btn = tk.Button(mw, text="Rent a car", width=15)
+        rental_btn = tk.Button(mw, text="Rent a car",
+                               width=15, command=self.open_rent)
         rental_btn.grid(row=2, column=0)
 
         return_btn = tk.Button(mw, text="Return a car", width=15)
@@ -90,6 +91,10 @@ class Main_Window:
     def open_vehicle(self):
         self.mainwindow.destroy()
         Vehicle_Window(self.parent)
+
+    def open_rent(self):
+        self.mainwindow.destroy()
+        Rent_Window(self.parent)
 
 
 class Vehicle_Window:
@@ -160,6 +165,48 @@ class Vehicle_Window:
 
     def back(self):
         self.vehiclewindow.destroy()
+        Main_Window(self.parent)
+
+
+class Rent_Window:
+    def __init__(self, parent) -> None:
+        self.parent = parent
+        self.rent_window = tk.Toplevel(self.parent)
+        self.rent_window.geometry("300x200")
+        rw = self.rent_window
+
+        # Reference string value of the selected vehicle using self.vehicle_selected.get()
+        self.vehicle_selected = tk.StringVar()
+        # Make query call from database to see available cars and form them into an array (options) -- Andy
+        options = ['Option 1', 'Option 2', 'Option 3']
+
+        ### VEHICLE DROPDOWN MENU ###
+        rent_label = tk.Label(
+            rw, text='Select an available vehicle', pady=20, padx=10)
+        rent_label.grid(row=0, column=0)
+        rent_menu = tk.OptionMenu(rw, self.vehicle_selected, *options)
+        rent_menu.grid(row=0, column=1)
+
+        ### PAY LATER BUTTON ###
+        paylater_btn = tk.Button(
+            rw, text="Pay Later", width=15)
+        paylater_btn.grid(row=1, column=0)
+
+        ### PAY NOW BUTTON ###
+        paynow_btn = tk.Button(
+            rw, text="Pay Now", width=15)
+        paynow_btn.grid(row=1, column=1)
+
+        ### BACK BUTTON ###
+        back_btn = tk.Button(rw, text="Back", width=15, command=self.back)
+        back_btn.grid(row=2, column=0, columnspan=3)
+
+        rw.protocol("WM_DELETE_WINDOW", close_window)
+        rw.mainloop()
+        pass
+
+    def back(self):
+        self.rent_window.destroy()
         Main_Window(self.parent)
 
 
