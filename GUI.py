@@ -1,9 +1,49 @@
 import tkinter as tk
+import sqlite3
 
+conn = sqlite3.connect('CarRental.db')
+c = conn.cursor()
 
 def close_window():
     window.destroy()
 
+class Main_Window:
+    def __init__(self, parent):
+        self.parent = parent
+        self.mainwindow = tk.Toplevel(self.parent)
+        self.mainwindow.geometry("150x125")
+        mw = self.mainwindow
+
+        register_btn = tk.Button(
+            mw, text="Register New Customer", width=20, command=self.open_register)
+        register_btn.grid(row=0, column=0)
+
+        vehicle_btn = tk.Button(mw, text="Register New Vehicle",
+                                width=15, command=self.open_vehicle)
+        vehicle_btn.grid(row=1, column=0)
+
+        rental_btn = tk.Button(mw, text="Rent a car",
+                               width=15, command=self.open_rent)
+        rental_btn.grid(row=2, column=0)
+
+        return_btn = tk.Button(mw, text="Return a car", width=15)
+        return_btn.grid(row=3, column=0)
+
+        mw.protocol("WM_DELETE_WINDOW", close_window)
+        mw.mainloop()
+        pass
+
+    def open_register(self):
+        self.mainwindow.destroy()
+        Register_Window(self.parent)
+
+    def open_vehicle(self):
+        self.mainwindow.destroy()
+        Vehicle_Window(self.parent)
+
+    def open_rent(self):
+        self.mainwindow.destroy()
+        Rent_Window(self.parent)
 
 class Register_Window:
     def __init__(self, parent):
@@ -44,58 +84,22 @@ class Register_Window:
         Main_Window(self.parent)
 
     def submit_handler(self):
-        print(self.user.get())
-        print(self.phone.get())
+        newName = self.user.get()
+        a = self.phone.get()
+        newPhone = '('+a[0]+a[1]+a[2]+') '+a[3]+a[4]+a[5]+'-'+a[6]+a[7]+a[8]+a[9]
+        print(newPhone)
 
-        if self.user.get().isalpha():
+        if not self.user.get().isnumeric():
             print("valid name")
+            if self.phone.get().isnumeric() and len(self.phone.get()) == 10:
+                print("valid number")
+                c.execute("INSERT INTO CUSTOMER(Name, Phone) VALUES(:newName, :newPhone)", {'newName': newName, 'newPhone': newPhone})
+                conn.commit()
+                self.back()
+            else:
+                print("invalid number")
         else:
             print("invalid name")
-
-        if self.phone.get().isnumeric() and len(self.phone.get()) == 10:
-            print("valid number")
-        else:
-            print("invalid number")
-            self.back()
-
-
-class Main_Window:
-    def __init__(self, parent):
-        self.parent = parent
-        self.mainwindow = tk.Toplevel(self.parent)
-        self.mainwindow.geometry("150x125")
-        mw = self.mainwindow
-        vehicle_btn = tk.Button(mw, text="Vehicle Lookup",
-                                width=15, command=self.open_vehicle)
-        vehicle_btn.grid(row=0, column=0)
-
-        register_btn = tk.Button(
-            mw, text="Register new customer", width=20, command=self.open_register)
-        register_btn.grid(row=1, column=0)
-
-        rental_btn = tk.Button(mw, text="Rent a car",
-                               width=15, command=self.open_rent)
-        rental_btn.grid(row=2, column=0)
-
-        return_btn = tk.Button(mw, text="Return a car", width=15)
-        return_btn.grid(row=3, column=0)
-
-        mw.protocol("WM_DELETE_WINDOW", close_window)
-        mw.mainloop()
-        pass
-
-    def open_register(self):
-        self.mainwindow.destroy()
-        Register_Window(self.parent)
-
-    def open_vehicle(self):
-        self.mainwindow.destroy()
-        Vehicle_Window(self.parent)
-
-    def open_rent(self):
-        self.mainwindow.destroy()
-        Rent_Window(self.parent)
-
 
 class Vehicle_Window:
     def __init__(self, parent):
@@ -148,7 +152,7 @@ class Vehicle_Window:
 
         ### SEARCH BUTTON ###
         search_btn = tk.Button(
-            vw, text="Search", width=15, command=self.search)
+            vw, text="Register", width=15, command=self.register)
         search_btn.grid(row=5, column=1)
 
         ### BACK BUTTON ###
@@ -158,10 +162,22 @@ class Vehicle_Window:
         vw.protocol("WM_DELETE_WINDOW", close_window)
         vw.mainloop()
 
-    def search(self):
-        print(self.type.get())
-        print(self.category.get())
-        pass
+    def register(self):
+        type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
+        carType = 0
+        carCategory = 0
+        for i in range(len(type_options)):
+            if self.type.get() == type_options[i]:
+                carType = i + 1
+
+        if self.category.get() == "Basic":
+            carCategory = 0
+        else:
+            carCategory = 1
+        c.execute("INSERT INTO VEHICLE VALUES(:VehicleID, :Description, :Year, :Type, :Category)",{'VehicleID': self.vehicleID.get(), 'Description': self.desc.get(), 'Year': self.year.get(), 'Type': carType, 'Category': carCategory})
+        conn.commit()
+        self.vehiclewindow.destroy()
+        Main_Window(self.parent)
 
     def back(self):
         self.vehiclewindow.destroy()
@@ -172,45 +188,95 @@ class Rent_Window:
     def __init__(self, parent) -> None:
         self.parent = parent
         self.rent_window = tk.Toplevel(self.parent)
-        self.rent_window.geometry("300x200")
+        self.rent_window.geometry("600x400")
         rw = self.rent_window
+
+        self.type = tk.StringVar()
+        type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
+
+        self.category = tk.StringVar()
+        category_options = ["Basic", "Luxury"]
+
+        ### CAR TYPE ###
+        type_label = tk.Label(
+            rw, text='Select Type', pady=0, padx=10)
+        type_label.grid(row=0, column=0)
+        type_menu = tk.OptionMenu(rw, self.type, *type_options)
+        type_menu.grid(row=0, column=1)
+
+        ### CATEGORY ###
+        category_label = tk.Label(
+            rw, text='Select Category', pady=0, padx=10)
+        category_label.grid(row=1, column=0)
+        category_menu = tk.OptionMenu(rw, self.category, *category_options)
+        category_menu.grid(row=1, column=1)
+
+        ### SEARCH BUTTON ###
+        search_btn = tk.Button(rw, text="Search", width=15, command=self.search)
+        search_btn.grid(row=2, column=0, columnspan=3)
 
         # Reference string value of the selected vehicle using self.vehicle_selected.get()
         self.vehicle_selected = tk.StringVar()
         # Make query call from database to see available cars and form them into an array (options) -- Andy
-        options = ['Option 1', 'Option 2', 'Option 3']
 
         ### VEHICLE DROPDOWN MENU ###
-        rent_label = tk.Label(
-            rw, text='Select an available vehicle', pady=20, padx=10)
-        rent_label.grid(row=0, column=0)
-        rent_menu = tk.OptionMenu(rw, self.vehicle_selected, *options)
-        rent_menu.grid(row=0, column=1)
+        # rent_label = tk.Label(
+        #     rw, text='Select an available vehicle', pady=20, padx=10)
+        # rent_label.grid(row=3, column=0)
+        # rent_menu = tk.OptionMenu(rw, self.vehicle_selected, *self.options)
+        # rent_menu.grid(row=3, column=1)
 
-        ### PAY LATER BUTTON ###
-        paylater_btn = tk.Button(
-            rw, text="Pay Later", width=15)
-        paylater_btn.grid(row=1, column=0)
-
-        ### PAY NOW BUTTON ###
-        paynow_btn = tk.Button(
-            rw, text="Pay Now", width=15)
-        paynow_btn.grid(row=1, column=1)
+        
 
         ### BACK BUTTON ###
         back_btn = tk.Button(rw, text="Back", width=15, command=self.back)
-        back_btn.grid(row=2, column=0, columnspan=3)
+        back_btn.grid(row=5, column=0, columnspan=3)
 
         rw.protocol("WM_DELETE_WINDOW", close_window)
         rw.mainloop()
         pass
+
+    def search(self):
+        type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
+        carType = 0
+        carCategory = 0
+        for i in range(len(type_options)):
+            if self.type.get() == type_options[i]:
+                carType = i + 1
+
+        if self.category.get() == "Basic":
+            carCategory = 0
+        else:
+            carCategory = 1
+        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {'Type': carType, 'Category': carCategory})
+        vehicles = []
+        for i in c.fetchall():
+            vehicles.append(i[0] + " " + i[1] + " " + str(i[2]))
+
+        rent_label = tk.Label(
+            self.rent_window, text='Select an available vehicle', pady=20, padx=10)
+        rent_label.grid(row=3, column=0)
+        rent_menu = tk.OptionMenu(self.rent_window, self.vehicle_selected, *vehicles)
+        rent_menu.grid(row=3, column=1)
+
+        ### PAY LATER BUTTON ###
+        paylater_btn = tk.Button(
+            self.rent_window, text="Pay Later", width=15)
+        paylater_btn.grid(row=4, column=0)
+
+        ### PAY NOW BUTTON ###
+        paynow_btn = tk.Button(
+            self.rent_window, text="Pay Now", width=15)
+        paynow_btn.grid(row=4, column=1)
 
     def back(self):
         self.rent_window.destroy()
         Main_Window(self.parent)
 
 
+
 window = tk.Tk()
 window.withdraw()
 Main_Window(window)
 window.mainloop()
+conn.close()
