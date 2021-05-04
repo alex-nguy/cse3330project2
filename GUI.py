@@ -29,7 +29,8 @@ class Main_Window:
                                width=15, command=self.open_rent)
         rental_btn.grid(row=2, column=0)
 
-        return_btn = tk.Button(mw, text="Return a car", width=15)
+        return_btn = tk.Button(mw, text="Return a car",
+                               width=15, command=self.open_return)
         return_btn.grid(row=3, column=0)
 
         mw.protocol("WM_DELETE_WINDOW", close_window)
@@ -47,6 +48,10 @@ class Main_Window:
     def open_rent(self):
         self.mainwindow.destroy()
         Rent_Window(self.parent)
+
+    def open_return(self):
+        self.mainwindow.destroy()
+        Return_Window(self.parent)
 
 
 class Register_Window:
@@ -229,6 +234,39 @@ class Rent_Window:
         pass
 
     def search(self):
+        '''
+        self.rent_window.geometry("300x250")
+        # prints out YYYY-MM-DD as a datetime object
+        print(self.start_cal.get_date())
+        # prints out YYYY-MM-DD as a datetime object
+        print(self.end_cal.get_date())
+
+        # convert datetime to string use strtime()
+
+        # TODO: MAKE A QUERY CALL FOR CARS BASED OFF OF START DATE AND END DATE. STORE QUERIES AS AN ARRAY
+        self.vehicle_selected = tk.StringVar()
+
+        # REPLACE THIS WITH CAR QUERIES
+        options = ['Option 1', 'Option 2', 'Option 3']
+
+        rent_label = tk.Label(
+            self.rent_window, text='Select an available vehicle', pady=20, padx=10)
+        rent_label.grid(row=3, column=0)
+        rent_menu = tk.OptionMenu(
+            self.rent_window, self.vehicle_selected, *options)
+        rent_menu.grid(row=3, column=1)
+
+        ### PAY LATER BUTTON ###
+        paylater_btn = tk.Button(
+            self.rent_window, text="Pay Later", width=15)
+        paylater_btn.grid(row=4, column=0)
+
+        ### PAY NOW BUTTON ###
+        paynow_btn = tk.Button(
+            self.rent_window, text="Pay Now", width=15)
+        paynow_btn.grid(row=4, column=1)
+        '''
+
         type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
         carType = 0
         carCategory = 0
@@ -266,6 +304,54 @@ class Rent_Window:
     def back(self):
         self.rent_window.destroy()
         Main_Window(self.parent)
+
+
+class Return_Window:
+    def __init__(self, parent):
+        self.parent = parent
+        self.return_window = tk.Toplevel(self.parent)
+        self.return_window.geometry("300x300")
+        rw = self.return_window
+
+        self.user_name = tk.StringVar()
+        self.vehicle_id = tk.StringVar()
+
+        return_label = tk.Label(rw, text='Return date:', pady=20, padx=10)
+        return_label.grid(row=0, column=0)
+        self.return_cal = DateEntry(rw, width=12, year=2021, month=5, day=4,
+                                    background='gray', foreground='white', borderwidth=2)
+        self.return_cal.grid(row=0, column=1)
+
+        name_label = tk.Label(rw, text='Enter your name:', pady=20, padx=10)
+        name_label.grid(row=1, column=0)
+        name_entry = tk.Entry(rw, textvariable=self.user_name)
+        name_entry.grid(row=1, column=1)
+
+        vehicle_label = tk.Label(
+            rw, text='Enter Vehicle ID:', pady=20, padx=10)
+        vehicle_label.grid(row=2, column=0)
+        vehicle_entry = tk.Entry(rw, textvariable=self.vehicle_id)
+        vehicle_entry.grid(row=2, column=1)
+
+        search_btn = tk.Button(
+            rw, text="Search", width=15, command=self.search)
+        search_btn.grid(row=3, column=1)
+
+        back_btn = tk.Button(
+            rw, text="Back", width=15, command=self.back)
+        back_btn.grid(row=3, column=0)
+
+        rw.protocol("WM_DELETE_WINDOW", close_window)
+        rw.mainloop()
+
+    def back(self):
+        self.return_window.destroy()
+        Main_Window(self.parent)
+
+    def search(self):
+
+        # TODO: SEARCH THROUGH DATABASE TO FIND THE SPECIFIC CAR AND PRINT TOTAL DUE FOR THE RENTAL AND UPDATE THE CAR AS RETURNED IN THE DATABASE
+        pass
 
 
 window = tk.Tk()
