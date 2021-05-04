@@ -63,12 +63,10 @@ class Main_Window:
     def open_customersearch(self):
         self.mainwindow.destroy()
         CustomerSearch_Window(self.parent)
-        # TODO
 
     def open_vehiclesearch(self):
-        # self.mainwindow.destroy()
-        # VehicleSearch_Window(self.parent)
-        # TODO
+        self.mainwindow.destroy()
+        VehicleSearch_Window(self.parent)
         pass
 
 
@@ -378,6 +376,7 @@ class CustomerSearch_Window:
         csw = self.customersearch_window
 
         self.customerID = tk.StringVar()
+        self.customer_name = tk.StringVar()
 
         customerID_label = tk.Label(
             csw, text='Enter customer ID', pady=20, padx=10)
@@ -388,7 +387,8 @@ class CustomerSearch_Window:
         customerName_label = tk.Label(
             csw, text='Enter customer name', pady=20, padx=10)
         customerName_label.grid(row=1, column=0)
-        customerName_entry = tk.Entry(csw, textvariable=self.customerID)
+        customerName_entry = tk.Entry(
+            csw, textvariable=self.customer_name)
         customerName_entry.grid(row=1, column=1)
 
         back_btn = tk.Button(csw, text="Back", width=15, command=self.back)
@@ -402,6 +402,10 @@ class CustomerSearch_Window:
         csw.mainloop()
 
     def search(self):
+        # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
+        # USE self.customerID.get() to get customer ID as a string
+        # USE self.customer_name.get() to get customer name as a string
+
         pass
 
     def back(self):
@@ -414,10 +418,43 @@ class VehicleSearch_Window:
         self.parent = parent
         self.vehiclesearch_window = tk.Toplevel(self.parent)
         self.vehiclesearch_window.geometry("300x300")
-        vsw = self.customersearch_window
+        vsw = self.vehiclesearch_window
+
+        self.VIN = tk.StringVar()
+        self.desc = tk.StringVar()
+
+        VIN_label = tk.Label(
+            vsw, text='Enter VIN', pady=20, padx=10)
+        VIN_label.grid(row=0, column=0)
+        VIN_entry = tk.Entry(vsw, textvariable=self.VIN)
+        VIN_entry.grid(row=0, column=1)
+
+        desc_label = tk.Label(
+            vsw, text='Enter vehicle description', pady=20, padx=10)
+        desc_label.grid(row=1, column=0)
+        customerName_entry = tk.Entry(
+            vsw, textvariable=self.desc)
+        customerName_entry.grid(row=1, column=1)
+
+        back_btn = tk.Button(vsw, text="Back", width=15, command=self.back)
+        back_btn.grid(row=2, column=0)
+
+        search_btn = tk.Button(vsw, text="Search",
+                               width=15, command=self.search)
+        search_btn.grid(row=2, column=1)
 
         vsw.protocol("WM_DELETE_WINDOW", close_window)
         vsw.mainloop()
+
+    def search(self):
+        # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
+        # USE self.VIN.get() to get vehicle VIN as a string
+        # USE self.desc.get() to get vehicle description as a string
+        pass
+
+    def back(self):
+        self.vehiclesearch_window.destroy()
+        Main_Window(self.parent)
 
 
 window = tk.Tk()
