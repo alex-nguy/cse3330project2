@@ -14,7 +14,7 @@ class Main_Window:
     def __init__(self, parent):
         self.parent = parent
         self.mainwindow = tk.Toplevel(self.parent)
-        self.mainwindow.geometry("150x125")
+        self.mainwindow.geometry("150x200")
         mw = self.mainwindow
 
         register_btn = tk.Button(
@@ -33,9 +33,16 @@ class Main_Window:
                                width=15, command=self.open_return)
         return_btn.grid(row=3, column=0)
 
+        customersearch_btn = tk.Button(mw, text="Search customers",
+                                       width=15, command=self.open_customersearch)
+        customersearch_btn.grid(row=4, column=0)
+
+        vehiclesearch_btn = tk.Button(mw, text="Search vehicles",
+                                      width=15, command=self.open_vehiclesearch)
+        vehiclesearch_btn.grid(row=5, column=0)
+
         mw.protocol("WM_DELETE_WINDOW", close_window)
         mw.mainloop()
-        pass
 
     def open_register(self):
         self.mainwindow.destroy()
@@ -52,6 +59,17 @@ class Main_Window:
     def open_return(self):
         self.mainwindow.destroy()
         Return_Window(self.parent)
+
+    def open_customersearch(self):
+        self.mainwindow.destroy()
+        CustomerSearch_Window(self.parent)
+        # TODO
+
+    def open_vehiclesearch(self):
+        # self.mainwindow.destroy()
+        # VehicleSearch_Window(self.parent)
+        # TODO
+        pass
 
 
 class Register_Window:
@@ -86,7 +104,6 @@ class Register_Window:
         back_button.grid(row=2, column=0)
         rw.protocol("WM_DELETE_WINDOW", close_window)
         rw.mainloop()
-        pass
 
     def back(self):
         self.registerwindow.destroy()
@@ -231,7 +248,6 @@ class Rent_Window:
 
         rw.protocol("WM_DELETE_WINDOW", close_window)
         rw.mainloop()
-        pass
 
     def search(self):
         '''
@@ -352,6 +368,14 @@ class Return_Window:
 
         # TODO: SEARCH THROUGH DATABASE TO FIND THE SPECIFIC CAR AND PRINT TOTAL DUE FOR THE RENTAL AND UPDATE THE CAR AS RETURNED IN THE DATABASE
         pass
+
+
+class CustomerSearch_Window:
+    def __init__(self, parent):
+        self.parent = parent
+        self.customersearch_window = tk.Toplevel(self.parent)
+        self.customersearch_window.geometry("300x300")
+        csw = self.customersearch_window
 
 
 window = tk.Tk()
