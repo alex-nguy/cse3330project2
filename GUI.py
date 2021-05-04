@@ -261,12 +261,12 @@ class Rent_Window:
 
         ### PAY LATER BUTTON ###
         paylater_btn = tk.Button(
-            self.rent_window, text="Pay Later", width=15)
+            self.rent_window, text="Pay Later", width=15, command=self.back)
         paylater_btn.grid(row=4, column=0)
 
         ### PAY NOW BUTTON ###
         paynow_btn = tk.Button(
-            self.rent_window, text="Pay Now", width=15)
+            self.rent_window, text="Pay Now", width=15, command=self.back)
         paynow_btn.grid(row=4, column=1)
 
     def back(self):
