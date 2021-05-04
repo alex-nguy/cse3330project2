@@ -377,6 +377,48 @@ class CustomerSearch_Window:
         self.customersearch_window.geometry("300x300")
         csw = self.customersearch_window
 
+        self.customerID = tk.StringVar()
+
+        customerID_label = tk.Label(
+            csw, text='Enter customer ID', pady=20, padx=10)
+        customerID_label.grid(row=0, column=0)
+        customerID_entry = tk.Entry(csw, textvariable=self.customerID)
+        customerID_entry.grid(row=0, column=1)
+
+        customerName_label = tk.Label(
+            csw, text='Enter customer name', pady=20, padx=10)
+        customerName_label.grid(row=1, column=0)
+        customerName_entry = tk.Entry(csw, textvariable=self.customerID)
+        customerName_entry.grid(row=1, column=1)
+
+        back_btn = tk.Button(csw, text="Back", width=15, command=self.back)
+        back_btn.grid(row=2, column=0)
+
+        search_btn = tk.Button(csw, text="Search",
+                               width=15, command=self.search)
+        search_btn.grid(row=2, column=1)
+
+        csw.protocol("WM_DELETE_WINDOW", close_window)
+        csw.mainloop()
+
+    def search(self):
+        pass
+
+    def back(self):
+        self.customersearch_window.destroy()
+        Main_Window(self.parent)
+
+
+class VehicleSearch_Window:
+    def __init__(self, parent):
+        self.parent = parent
+        self.vehiclesearch_window = tk.Toplevel(self.parent)
+        self.vehiclesearch_window.geometry("300x300")
+        vsw = self.customersearch_window
+
+        vsw.protocol("WM_DELETE_WINDOW", close_window)
+        vsw.mainloop()
+
 
 window = tk.Tk()
 window.withdraw()
