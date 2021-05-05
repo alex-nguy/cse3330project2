@@ -3,12 +3,12 @@ import sqlite3
 conn = sqlite3.connect('CarRental.db')
 c = conn.cursor()
 
-# QUESTION 1
-newName = input("Enter your name: ")
-c.execute("INSERT INTO CUSTOMER(Name) VALUES(:newName)", {'newName': newName})
+# # QUESTION 1
+# newName = input("Enter your name: ")
+# c.execute("INSERT INTO CUSTOMER(Name) VALUES(:newName)", {'newName': newName})
 
-# QUESTION 2
-c.execute("UPDATE CUSTOMER SET Phone = '(837) 721-8965' WHERE Name = :newName", {'newName': newName})
+# # QUESTION 2
+# c.execute("UPDATE CUSTOMER SET Phone = '(837) 721-8965' WHERE Name = :newName", {'newName': newName})
 
 # QUESTION 3
 c.execute("UPDATE RATE SET Daily = Daily * 1.05 WHERE Category = 1")

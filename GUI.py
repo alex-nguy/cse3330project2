@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkcalendar import DateEntry
 from tkinter import ttk
+from datetime import date
 import sqlite3
 
 conn = sqlite3.connect('CarRental.db')
 c = conn.cursor()
-
+today = date.today()
+d1 = today.strftime("%Y-%m-%d")
 
 def close_window():
     window.destroy()
@@ -336,14 +338,14 @@ class Rent_Window:
     def payLater(self):
         vID = self.vehicle_selected.get().split(' ')[0]
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)", {'CustID': int(
-            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
+            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
         conn.commit()
         self.back()
 
     def payNow(self):
         vID = self.vehicle_selected.get().split(' ')[0]
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get(
-        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': '2021-05-04'})
+        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': d1})
         conn.commit()
         self.back()
 
@@ -404,9 +406,28 @@ class Return_Window:
             temp[1] = '0' + temp[1]
         returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
 
-        c.execute("SELECT RENTAL.TotalAmount FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {
-                  'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate})
-        balance = c.fetchall()
+        c.execute("SELECT RENTAL.TotalAmount FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate})
+        balance = c.fetchall()[-1]
+        payment = '$'+str("{:.2f}".format(balance[0]))
+        print(payment)
+        pay_label = tk.Label(self.return_window, text='Payment Due:', pady=20, padx=10)
+        pay_label.grid(row=4, column=0)
+        pay = tk.Label(self.return_window, text=payment, pady=20, padx=10)
+        pay.grid(row=4, column=1)
+        pay_btn = tk.Button(
+            self.return_window, text="Pay", width=15, command=self.pay)
+        pay_btn.grid(row=5, column=1)
+
+    def pay(self):
+        temp = self.return_cal.get().split('/')
+        if int(temp[0]) < 10:
+            temp[0] = '0' + temp[0]
+        if int(temp[1]) < 10:
+            temp[1] = '0' + temp[1]
+        returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
+        c.execute("UPDATE RENTAL SET PaymentDate = DATE(:payDate) FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate, 'payDate': d1})
+        conn.commit()
+        self.back()
 
 
 class CustomerSearch_Window:
@@ -516,7 +537,6 @@ class VehicleSearch_Window:
             vehicle_table.insert("", "end", values=info[i])
         vehicle_table.grid(row=3, column=0)
 
-        pass
         pass
 
     def back(self):
