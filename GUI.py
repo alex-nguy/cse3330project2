@@ -404,7 +404,8 @@ class Return_Window:
             temp[1] = '0' + temp[1]
         returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
 
-        c.execute("SELECT RENTAL.TotalAmount FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate})
+        c.execute("SELECT RENTAL.TotalAmount FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {
+                  'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate})
         balance = c.fetchall()
 
 
@@ -412,7 +413,7 @@ class CustomerSearch_Window:
     def __init__(self, parent):
         self.parent = parent
         self.customersearch_window = tk.Toplevel(self.parent)
-        self.customersearch_window.geometry("300x300")
+        self.customersearch_window.geometry("800x800")
         csw = self.customersearch_window
 
         self.customerID = tk.StringVar()
@@ -445,11 +446,21 @@ class CustomerSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.customerID.get() to get customer ID as a string
         # USE self.customer_name.get() to get customer name as a string
-        c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name GROUP BY CUSTOMER.CustID", {'Name': '%'+self.customer_name.get()+'%'})
+        c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name GROUP BY CUSTOMER.CustID", {
+                  'Name': '%'+self.customer_name.get()+'%'})
         info = c.fetchall()
         print(info)
+        for i in range(len(info)):
+            x = list(info[i])
+            if not x[2] == None:
+                x[2] = 0
+            info[i] = tuple(x)
+
         customer_table = ttk.Treeview(self.customersearch_window, columns=(
             "Customer ID", "Name", "Remaining Balance"), show="headings")
+
+        for i in range(len(info)):
+            customer_table.insert("", "end", values=info[i])
         customer_table.grid(row=3, column=0)
         pass
 
@@ -462,7 +473,7 @@ class VehicleSearch_Window:
     def __init__(self, parent):
         self.parent = parent
         self.vehiclesearch_window = tk.Toplevel(self.parent)
-        self.vehiclesearch_window.geometry("300x300")
+        self.vehiclesearch_window.geometry("800x800")
         vsw = self.vehiclesearch_window
 
         self.VIN = tk.StringVar()
@@ -495,12 +506,16 @@ class VehicleSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.VIN.get() to get vehicle VIN as a string
         # USE self.desc.get() to get vehicle description as a string
-        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.Description LIKE :Description", {'Description': '%'+self.desc.get()+'%'})
+        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.Description LIKE :Description", {
+                  'Description': '%'+self.desc.get()+'%'})
         info = c.fetchall()
-        print(info)
         vehicle_table = ttk.Treeview(self.vehiclesearch_window, columns=(
             "VIN", "Vehicle Description", "Average Daily Prices"), show="headings")
+
+        for i in range(len(info)):
+            vehicle_table.insert("", "end", values=info[i])
         vehicle_table.grid(row=3, column=0)
+
         pass
         pass
 
