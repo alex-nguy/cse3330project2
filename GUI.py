@@ -115,20 +115,13 @@ class Register_Window:
         a = self.phone.get()
         newPhone = '('+a[0]+a[1]+a[2]+') '+a[3] + \
             a[4]+a[5]+'-'+a[6]+a[7]+a[8]+a[9]
-        print(newPhone)
 
         if not self.user.get().isnumeric():
-            print("valid name")
             if self.phone.get().isnumeric() and len(self.phone.get()) == 10:
-                print("valid number")
                 c.execute("INSERT INTO CUSTOMER(Name, Phone) VALUES(:newName, :newPhone)", {
                           'newName': newName, 'newPhone': newPhone})
                 conn.commit()
                 self.back()
-            else:
-                print("invalid number")
-        else:
-            print("invalid name")
 
 
 class Vehicle_Window:
@@ -407,7 +400,6 @@ class Return_Window:
         c.execute("SELECT RENTAL.TotalAmount FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate})
         balance = c.fetchall()[-1]
         payment = '$'+str("{:.2f}".format(balance[0]))
-        print(payment)
         pay_label = tk.Label(self.return_window, text='Payment Due:', pady=20, padx=10)
         pay_label.grid(row=4, column=0)
         pay = tk.Label(self.return_window, text=payment, pady=20, padx=10)
@@ -468,11 +460,13 @@ class CustomerSearch_Window:
         c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name GROUP BY CUSTOMER.CustID", {
                   'Name': '%'+self.customer_name.get()+'%'})
         info = c.fetchall()
-        print(info)
+
         for i in range(len(info)):
             x = list(info[i])
-            if not x[2] == None:
-                x[2] = 0
+            if x[2] is None:
+                x[2] = '$0.00'
+            else:
+                x[2] = '$'+str("{:.2f}".format(x[2]))
             info[i] = tuple(x)
 
         customer_table = ttk.Treeview(self.customersearch_window, columns=(
