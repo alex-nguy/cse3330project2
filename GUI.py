@@ -280,8 +280,6 @@ class Rent_Window:
 
     def search(self):
         type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
-        carType = 0
-        carCategory = 0
 
         for i in range(len(type_options)):
             if self.type.get() == type_options[i]:
@@ -425,7 +423,7 @@ class Return_Window:
         if int(temp[1]) < 10:
             temp[1] = '0' + temp[1]
         returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
-        c.execute("UPDATE RENTAL SET PaymentDate = DATE(:payDate) FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate, 'payDate': d1})
+        c.execute("UPDATE RENTAL SET PaymentDate = DATE(:payDate) WHERE VehicleID = :VehicleID AND ReturnDate == DATE(:ReturnDate)", {'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate, 'payDate': d1})
         conn.commit()
         self.back()
 
@@ -537,6 +535,7 @@ class VehicleSearch_Window:
             vehicle_table.insert("", "end", values=info[i])
         vehicle_table.grid(row=3, column=0)
 
+        pass
         pass
 
     def back(self):
