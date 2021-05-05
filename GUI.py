@@ -526,10 +526,13 @@ class VehicleSearch_Window:
             "VIN", "Vehicle Description", "Average Daily Prices"), show="headings")
 
         for i in range(len(info)):
+            x = list(info[i])
+            x[2] = '$'+str("{:.2f}".format(x[2]))
+            info[i] = tuple(x)
+
+        for i in range(len(info)):
             vehicle_table.insert("", "end", values=info[i])
         vehicle_table.grid(row=3, column=0)
-
-        pass
         pass
 
     def back(self):
