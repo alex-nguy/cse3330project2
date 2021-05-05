@@ -337,7 +337,7 @@ class Rent_Window:
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty':3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': '2021-05-04'})
         conn.commit()
         self.back()
-        
+
     def back(self):
         self.rent_window.destroy()
         Main_Window(self.parent)
@@ -388,7 +388,13 @@ class Return_Window:
     def search(self):
 
         # TODO: SEARCH THROUGH DATABASE TO FIND THE SPECIFIC CAR AND PRINT TOTAL DUE FOR THE RENTAL AND UPDATE THE CAR AS RETURNED IN THE DATABASE
-        pass
+        temp = self.return_cal.get().split('/')
+        if int(temp[0]) < 10:
+            temp[0] = '0' + temp[0]
+        if int(temp[1]) < 10:
+            temp[1] = '0' + temp[1]
+        returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
+        
 
 
 class CustomerSearch_Window:
