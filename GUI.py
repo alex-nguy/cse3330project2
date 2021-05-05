@@ -247,13 +247,13 @@ class Rent_Window:
 
         start_label = tk.Label(rw, text='Rent start date:', pady=20, padx=10)
         start_label.grid(row=2, column=0)
-        self.start_cal = DateEntry(rw, width=12, year=2021, month=5, day=4,
+        self.start_cal = DateEntry(rw, width=12, year=2021, month=5, day=7,
                                    background='gray', foreground='white', borderwidth=2)
         self.start_cal.grid(row=2, column=1)
 
         end_label = tk.Label(rw, text='Return date:', pady=20, padx=10)
         end_label.grid(row=3, column=0)
-        self.end_cal = DateEntry(rw, width=12, year=2021, month=5, day=5,
+        self.end_cal = DateEntry(rw, width=12, year=2021, month=5, day=8,
                                  background='gray', foreground='white', borderwidth=2)
         self.end_cal.grid(row=3, column=1)
 
@@ -344,16 +344,14 @@ class Rent_Window:
     def payLater(self):
         vID = self.vehicle_selected.get().split(' ')[0]
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)", {'CustID': int(
-            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
-        print({'CustID': int(
-            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
+            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 80})
         conn.commit()
         self.back()
 
     def payNow(self):
         vID = self.vehicle_selected.get().split(' ')[0]
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get(
-        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': d1})
+        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 80, 'PaymentDate': d1})
         conn.commit()
         self.back()
 
