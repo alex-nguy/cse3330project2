@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
+from tkinter import ttk
 import sqlite3
 
 conn = sqlite3.connect('CarRental.db')
@@ -127,6 +128,7 @@ class Register_Window:
         else:
             print("invalid name")
 
+
 class Vehicle_Window:
     def __init__(self, parent):
         self.parent = parent
@@ -212,6 +214,7 @@ class Vehicle_Window:
         self.vehiclewindow.destroy()
         Main_Window(self.parent)
 
+
 class Rent_Window:
     def __init__(self, parent) -> None:
         self.parent = parent
@@ -293,7 +296,7 @@ class Rent_Window:
         if int(temp[1]) < 10:
             temp[1] = '0' + temp[1]
         self.startDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
-        
+
         temp2 = self.start_cal.get().split('/')
         if int(temp[0]) < 10:
             temp2[0] = '0' + temp2[0]
@@ -301,17 +304,21 @@ class Rent_Window:
             temp2[1] = '0' + temp2[1]
         self.returnDate = "20" + temp2[2] + '-' + temp2[0] + '-' + temp2[1]
 
-        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {'Type': self.ty, 'Category': self.cat, 'startDate': self.startDate, 'returnDate': self.returnDate})
+        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {
+                  'Type': self.ty, 'Category': self.cat, 'startDate': self.startDate, 'returnDate': self.returnDate})
         vehicles = []
         for i in c.fetchall():
             vehicles.append(i[0] + " " + i[1] + " " + str(i[2]))
 
-        rent_label = tk.Label(self.rent_window, text='Select an available vehicle', pady=20, padx=10)
+        rent_label = tk.Label(
+            self.rent_window, text='Select an available vehicle', pady=20, padx=10)
         rent_label.grid(row=5, column=0)
-        rent_menu = tk.OptionMenu(self.rent_window, self.vehicle_selected, *vehicles)
+        rent_menu = tk.OptionMenu(
+            self.rent_window, self.vehicle_selected, *vehicles)
         rent_menu.grid(row=5, column=1)
 
-        name_label = tk.Label(self.rent_window, text='Customer ID:', pady=20, padx=10)
+        name_label = tk.Label(
+            self.rent_window, text='Customer ID:', pady=20, padx=10)
         name_label.grid(row=6, column=0)
         name_entry = tk.Entry(self.rent_window, textvariable=self.user)
         name_entry.grid(row=6, column=1)
@@ -328,13 +335,15 @@ class Rent_Window:
 
     def payLater(self):
         vID = self.vehicle_selected.get().split(' ')[0]
-        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)", {'CustID': int(self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty':3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
+        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)", {'CustID': int(
+            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
         conn.commit()
         self.back()
 
     def payNow(self):
         vID = self.vehicle_selected.get().split(' ')[0]
-        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty':3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': '2021-05-04'})
+        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get(
+        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': '2021-05-04'})
         conn.commit()
         self.back()
 
@@ -394,7 +403,6 @@ class Return_Window:
         if int(temp[1]) < 10:
             temp[1] = '0' + temp[1]
         returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
-        
 
 
 class CustomerSearch_Window:
@@ -434,7 +442,9 @@ class CustomerSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.customerID.get() to get customer ID as a string
         # USE self.customer_name.get() to get customer name as a string
-
+        customer_table = ttk.Treeview(self.customersearch_window, columns=(
+            "Customer ID", "Name", "Remaining Balance"), show="headings")
+        customer_table.grid(row=3, column=0)
         pass
 
     def back(self):
@@ -479,6 +489,10 @@ class VehicleSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.VIN.get() to get vehicle VIN as a string
         # USE self.desc.get() to get vehicle description as a string
+        vehicle_table = ttk.Treeview(self.vehiclesearch_window, columns=(
+            "VIN", "Vehicle Description", "Average Daily Prices"), show="headings")
+        vehicle_table.grid(row=3, column=0)
+        pass
         pass
 
     def back(self):
