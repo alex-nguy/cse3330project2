@@ -218,6 +218,8 @@ class Rent_Window:
         rw = self.rent_window
 
         self.user = tk.StringVar()
+        self.dw = tk.StringVar()
+        self.qty = tk.StringVar()
         self.ty = 0
         self.cat = 0
         self.startDate = ""
@@ -272,6 +274,7 @@ class Rent_Window:
         rw.mainloop()
 
     def search(self):
+        self.rent_window.geometry("600x800")
         type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
 
         for i in range(len(type_options)):
@@ -297,7 +300,7 @@ class Rent_Window:
             temp2[1] = '0' + temp2[1]
         self.returnDate = "20" + temp2[2] + '-' + temp2[0] + '-' + temp2[1]
 
-        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {
+        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE, RENTAL WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {
                   'Type': self.ty, 'Category': self.cat, 'startDate': self.startDate, 'returnDate': self.returnDate})
         vehicles = []
         for i in c.fetchall():
@@ -316,27 +319,41 @@ class Rent_Window:
         name_entry = tk.Entry(self.rent_window, textvariable=self.user)
         name_entry.grid(row=6, column=1)
 
+        dw_label = tk.Label(
+            self.rent_window, text='Daily(1) or Weekly(7):', pady=20, padx=10)
+        dw_label.grid(row=7, column=0)
+        dw_entry = tk.Entry(self.rent_window, textvariable=self.dw)
+        dw_entry.grid(row=7, column=1)
+
+        q_label = tk.Label(
+            self.rent_window, text='How many days/weeks:', pady=20, padx=10)
+        q_label.grid(row=8, column=0)
+        q_entry = tk.Entry(self.rent_window, textvariable=self.qty)
+        q_entry.grid(row=8, column=1)
+
         ### PAY LATER BUTTON ###
         paylater_btn = tk.Button(
             self.rent_window, text="Pay Later", width=15, command=self.payLater)
-        paylater_btn.grid(row=7, column=0)
+        paylater_btn.grid(row=9, column=0)
 
         ### PAY NOW BUTTON ###
         paynow_btn = tk.Button(
-            self.rent_window, text="Pay Now", width=15, command=self.back)
-        paynow_btn.grid(row=7, column=1)
+            self.rent_window, text="Pay Now", width=15, command=self.payNow)
+        paynow_btn.grid(row=9, column=1)
 
     def payLater(self):
         vID = self.vehicle_selected.get().split(' ')[0]
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)", {'CustID': int(
-            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
+            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
+        print({'CustID': int(
+            self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
         conn.commit()
         self.back()
 
     def payNow(self):
         vID = self.vehicle_selected.get().split(' ')[0]
         c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get(
-        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': 1, 'Qty': 3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': d1})
+        )), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': d1, 'RentalType': int(self.dw.get()), 'Qty': int(self.qty.get()), 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': d1})
         conn.commit()
         self.back()
 
@@ -479,6 +496,7 @@ class CustomerSearch_Window:
         customer_table = ttk.Treeview(self.customersearch_window, columns=(
             "Customer ID", "Name", "Remaining Balance"), show="headings")
 
+        customer_table.insert("", "end", values=["Customer ID", "Name", "Remaining Balance"])
         for i in range(len(info)):
             customer_table.insert("", "end", values=info[i])
         customer_table.grid(row=3, column=0)
@@ -544,6 +562,7 @@ class VehicleSearch_Window:
             x[2] = '$'+str("{:.2f}".format(x[2]))
             info[i] = tuple(x)
 
+        vehicle_table.insert("", "end", values=["VIN", "Vehicle Description", "Average Daily Prices"])
         for i in range(len(info)):
             vehicle_table.insert("", "end", values=info[i])
         vehicle_table.grid(row=3, column=0)
