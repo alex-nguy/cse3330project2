@@ -127,7 +127,6 @@ class Register_Window:
         else:
             print("invalid name")
 
-
 class Vehicle_Window:
     def __init__(self, parent):
         self.parent = parent
@@ -137,6 +136,8 @@ class Vehicle_Window:
         self.vehicleID = tk.StringVar()
         self.desc = tk.StringVar()
         self.year = tk.StringVar()
+        self.ty = 0
+        self.cat = 0
 
         self.type = tk.StringVar()
         type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
@@ -211,7 +212,6 @@ class Vehicle_Window:
         self.vehiclewindow.destroy()
         Main_Window(self.parent)
 
-
 class Rent_Window:
     def __init__(self, parent) -> None:
         self.parent = parent
@@ -219,22 +219,48 @@ class Rent_Window:
         self.rent_window.geometry("600x400")
         rw = self.rent_window
 
+        self.user = tk.StringVar()
+        self.ty = 0
+        self.cat = 0
+        self.startDate = ""
+        self.returnDate = ""
+
+        self.type = tk.StringVar()
+        type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
+
+        self.category = tk.StringVar()
+        category_options = ["Basic", "Luxury"]
+
+        ### CAR TYPE ###
+        type_label = tk.Label(
+            rw, text='Select Type', pady=20, padx=10)
+        type_label.grid(row=0, column=0)
+        type_menu = tk.OptionMenu(rw, self.type, *type_options)
+        type_menu.grid(row=0, column=1)
+
+        ### CATEGORY ###
+        category_label = tk.Label(
+            rw, text='Select Category', pady=20, padx=10)
+        category_label.grid(row=1, column=0)
+        category_menu = tk.OptionMenu(rw, self.category, *category_options)
+        category_menu.grid(row=1, column=1)
+
         start_label = tk.Label(rw, text='Rent start date:', pady=20, padx=10)
-        start_label.grid(row=0, column=0)
+        start_label.grid(row=2, column=0)
         self.start_cal = DateEntry(rw, width=12, year=2021, month=5, day=4,
                                    background='gray', foreground='white', borderwidth=2)
-        self.start_cal.grid(row=0, column=1)
+        self.start_cal.grid(row=2, column=1)
 
         end_label = tk.Label(rw, text='Return date:', pady=20, padx=10)
-        end_label.grid(row=1, column=0)
+        end_label.grid(row=3, column=0)
         self.end_cal = DateEntry(rw, width=12, year=2021, month=5, day=5,
                                  background='gray', foreground='white', borderwidth=2)
-        self.end_cal.grid(row=1, column=1)
+        self.end_cal.grid(row=3, column=1)
 
         ### SEARCH BUTTON ###
         search_btn = tk.Button(
             rw, text="Find available cars", width=15, command=self.search)
-        search_btn.grid(row=2, column=1)
+        search_btn.grid(row=4, column=1)
 
         # Reference string value of the selected vehicle using self.vehicle_selected.get()
         self.vehicle_selected = tk.StringVar()
@@ -242,79 +268,76 @@ class Rent_Window:
 
         ### BACK BUTTON ###
         back_btn = tk.Button(rw, text="Back", width=15, command=self.back)
-        back_btn.grid(row=2, column=0)
+        back_btn.grid(row=4, column=0)
 
         rw.protocol("WM_DELETE_WINDOW", close_window)
         rw.mainloop()
 
     def search(self):
-        '''
-        self.rent_window.geometry("300x250")
-        # prints out YYYY-MM-DD as a datetime object
-        print(self.start_cal.get_date())
-        # prints out YYYY-MM-DD as a datetime object
-        print(self.end_cal.get_date())
-
-        # convert datetime to string use strtime()
-
-        # TODO: MAKE A QUERY CALL FOR CARS BASED OFF OF START DATE AND END DATE. STORE QUERIES AS AN ARRAY
-        self.vehicle_selected = tk.StringVar()
-
-        # REPLACE THIS WITH CAR QUERIES
-        options = ['Option 1', 'Option 2', 'Option 3']
-
-        rent_label = tk.Label(
-            self.rent_window, text='Select an available vehicle', pady=20, padx=10)
-        rent_label.grid(row=3, column=0)
-        rent_menu = tk.OptionMenu(
-            self.rent_window, self.vehicle_selected, *options)
-        rent_menu.grid(row=3, column=1)
-
-        ### PAY LATER BUTTON ###
-        paylater_btn = tk.Button(
-            self.rent_window, text="Pay Later", width=15)
-        paylater_btn.grid(row=4, column=0)
-
-        ### PAY NOW BUTTON ###
-        paynow_btn = tk.Button(
-            self.rent_window, text="Pay Now", width=15)
-        paynow_btn.grid(row=4, column=1)
-        '''
-
         type_options = ["Compact", "Medium", "Large", "SUV", "Truck", "Van"]
         carType = 0
         carCategory = 0
+
         for i in range(len(type_options)):
             if self.type.get() == type_options[i]:
-                carType = i + 1
+                self.ty = i + 1
 
         if self.category.get() == "Basic":
-            carCategory = 0
+            self.cat = 0
         else:
-            carCategory = 1
-        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {
-                  'Type': carType, 'Category': carCategory})
+            self.cat = 1
+
+        temp = self.start_cal.get().split('/')
+        if int(temp[0]) < 10:
+            temp[0] = '0' + temp[0]
+        if int(temp[1]) < 10:
+            temp[1] = '0' + temp[1]
+        self.startDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
+        
+        temp2 = self.start_cal.get().split('/')
+        if int(temp[0]) < 10:
+            temp2[0] = '0' + temp2[0]
+        if int(temp[1]) < 10:
+            temp2[1] = '0' + temp2[1]
+        self.returnDate = "20" + temp2[2] + '-' + temp2[0] + '-' + temp2[1]
+
+        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, VEHICLE.Year FROM VEHICLE WHERE VEHICLE.Type = :Type AND VEHICLE.Category = :Category", {'Type': self.ty, 'Category': self.cat, 'startDate': self.startDate, 'returnDate': self.returnDate})
         vehicles = []
         for i in c.fetchall():
             vehicles.append(i[0] + " " + i[1] + " " + str(i[2]))
 
-        rent_label = tk.Label(
-            self.rent_window, text='Select an available vehicle', pady=20, padx=10)
-        rent_label.grid(row=3, column=0)
-        rent_menu = tk.OptionMenu(
-            self.rent_window, self.vehicle_selected, *vehicles)
-        rent_menu.grid(row=3, column=1)
+        rent_label = tk.Label(self.rent_window, text='Select an available vehicle', pady=20, padx=10)
+        rent_label.grid(row=5, column=0)
+        rent_menu = tk.OptionMenu(self.rent_window, self.vehicle_selected, *vehicles)
+        rent_menu.grid(row=5, column=1)
+
+        name_label = tk.Label(self.rent_window, text='Customer ID:', pady=20, padx=10)
+        name_label.grid(row=6, column=0)
+        name_entry = tk.Entry(self.rent_window, textvariable=self.user)
+        name_entry.grid(row=6, column=1)
 
         ### PAY LATER BUTTON ###
         paylater_btn = tk.Button(
-            self.rent_window, text="Pay Later", width=15, command=self.back)
-        paylater_btn.grid(row=4, column=0)
+            self.rent_window, text="Pay Later", width=15, command=self.payLater)
+        paylater_btn.grid(row=7, column=0)
 
         ### PAY NOW BUTTON ###
         paynow_btn = tk.Button(
             self.rent_window, text="Pay Now", width=15, command=self.back)
-        paynow_btn.grid(row=4, column=1)
+        paynow_btn.grid(row=7, column=1)
 
+    def payLater(self):
+        vID = self.vehicle_selected.get().split(' ')[0]
+        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, NULL)", {'CustID': int(self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty':3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400})
+        conn.commit()
+        self.back()
+
+    def payNow(self):
+        vID = self.vehicle_selected.get().split(' ')[0]
+        c.execute("INSERT INTO RENTAL VALUES(:CustID, :VehicleID, :StartDate, :OrderDate, :RentalType, :Qty, :ReturnDate, :TotalAmount, :PaymentDate)", {'CustID': int(self.user.get()), 'VehicleID': vID, 'StartDate': self.startDate, 'OrderDate': '2021-05-04', 'RentalType': 1, 'Qty':3, 'ReturnDate': self.returnDate, 'TotalAmount': 1400, 'PaymentDate': '2021-05-04'})
+        conn.commit()
+        self.back()
+        
     def back(self):
         self.rent_window.destroy()
         Main_Window(self.parent)
