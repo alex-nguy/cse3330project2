@@ -457,8 +457,15 @@ class CustomerSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.customerID.get() to get customer ID as a string
         # USE self.customer_name.get() to get customer name as a string
-        c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name GROUP BY CUSTOMER.CustID", {
-                  'Name': '%'+self.customer_name.get()+'%'})
+        if len(self.customerID.get()) == 0:
+            c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name GROUP BY CUSTOMER.CustID", {
+                    'Name': '%'+self.customer_name.get()+'%'})
+        elif len(self.customer_name.get()) == 0:
+            c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.CustID = :ID GROUP BY CUSTOMER.CustID", {
+                    'ID': self.customerID.get()})
+        else:
+            c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name AND CUSTOMER.CustID = :ID GROUP BY CUSTOMER.CustID", {
+                    'Name': '%'+self.customer_name.get()+'%', 'ID': self.customerID.get()})
         info = c.fetchall()
 
         for i in range(len(info)):
@@ -519,8 +526,15 @@ class VehicleSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.VIN.get() to get vehicle VIN as a string
         # USE self.desc.get() to get vehicle description as a string
-        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.Description LIKE :Description", {
-                  'Description': '%'+self.desc.get()+'%'})
+        if len(self.VIN.get()) == 0:
+            c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.Description LIKE :Description", {
+                    'Description': '%'+self.desc.get()+'%'})
+        elif len(self.desc.get()) == 0:
+            c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.VehicleID = :VIN", {
+                    'VIN': self.VIN.get()})
+        else:
+            c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.Description LIKE :Description AND VEHICLE.VehicleID = :VIN", {
+                    'Description': '%'+self.desc.get()+'%', 'VIN': self.VIN.get()})
         info = c.fetchall()
         vehicle_table = ttk.Treeview(self.vehiclesearch_window, columns=(
             "VIN", "Vehicle Description", "Average Daily Prices"), show="headings")
