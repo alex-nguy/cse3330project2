@@ -404,6 +404,9 @@ class Return_Window:
             temp[1] = '0' + temp[1]
         returnDate = "20" + temp[2] + '-' + temp[0] + '-' + temp[1]
 
+        c.execute("SELECT RENTAL.TotalAmount FROM RENTAL, CUSTOMER WHERE CUSTOMER.Name = :Name AND CUSTOMER.CustID = RENTAL.CustID AND RENTAL.VehicleID = :VehicleID AND RENTAL.ReturnDate == DATE(:ReturnDate)", {'Name': self.user_name.get(), 'VehicleID': self.vehicle_id.get(), 'ReturnDate': returnDate})
+        balance = c.fetchall()
+
 
 class CustomerSearch_Window:
     def __init__(self, parent):
@@ -442,6 +445,9 @@ class CustomerSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.customerID.get() to get customer ID as a string
         # USE self.customer_name.get() to get customer name as a string
+        c.execute("SELECT CUSTOMER.CustID, CUSTOMER.Name, SUM(RENTAL.TotalAmount) FROM CUSTOMER LEFT JOIN RENTAL ON CUSTOMER.CustID = RENTAL.CustID WHERE CUSTOMER.Name LIKE :Name GROUP BY CUSTOMER.CustID", {'Name': '%'+self.customer_name.get()+'%'})
+        info = c.fetchall()
+        print(info)
         customer_table = ttk.Treeview(self.customersearch_window, columns=(
             "Customer ID", "Name", "Remaining Balance"), show="headings")
         customer_table.grid(row=3, column=0)
@@ -489,6 +495,9 @@ class VehicleSearch_Window:
         # TODO: RETURN A SEARCH QUERY BASED ON THE FILTERS GIVEN
         # USE self.VIN.get() to get vehicle VIN as a string
         # USE self.desc.get() to get vehicle description as a string
+        c.execute("SELECT VEHICLE.VehicleID, VEHICLE.Description, RATE.Daily FROM VEHICLE, RATE WHERE VEHICLE.Type = RATE.Type AND VEHICLE.Category = RATE.Category AND VEHICLE.Description LIKE :Description", {'Description': '%'+self.desc.get()+'%'})
+        info = c.fetchall()
+        print(info)
         vehicle_table = ttk.Treeview(self.vehiclesearch_window, columns=(
             "VIN", "Vehicle Description", "Average Daily Prices"), show="headings")
         vehicle_table.grid(row=3, column=0)
